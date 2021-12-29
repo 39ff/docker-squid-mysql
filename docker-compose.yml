@@ -1,0 +1,30 @@
+version: "3.3"
+services:
+  php:
+    image: squidphp
+    build: ./squidphp
+    volumes:
+      - ./:/app/
+  squid:
+    ports:
+      - 13128:3128
+    image: squidmysql
+    build: ./squidmysql
+    volumes:
+      - './config:/etc/squid/conf.d:ro'
+    container_name: mysquid_1
+    environment:
+      - 'SQUID_CONFIG_FILE=/etc/squid/conf.d/squid.conf'
+    restart: always
+  db:
+    ports:
+      - 13306:3306
+    image: mariadb:10.5
+    volumes:
+      - ./db_data:/var/lib/mysql
+    container_name: mydb_1
+    environment:
+      MYSQL_ROOT_PASSWORD: squid
+    restart: always
+volumes:
+  db:
